@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SilentDrift — starting up…</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0E1420;
+    --bg-raised: #161D2C;
+    --bg-card: #1B2333;
+    --border: #2A3344;
+    --text: #E8E6DE;
+    --text-dim: #9AA3B5;
+    --text-faint: #5C6478;
+    --amber: #E8A23D;
+    --amber-dim: #4A3B22;
+    --teal: #4FA88F;
+    --teal-dim: #1F3B34;
+    --font-display: 'IBM Plex Sans', sans-serif;
+    --font-mono: 'IBM Plex Mono', monospace;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-display);
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  header {
+    border-bottom: 1px solid var(--border);
+    padding: 20px 0;
+  }
+  header .wrap { display: flex; align-items: center; justify-content: center; }
+  .logo { font-weight: 700; font-size: 1.05rem; letter-spacing: -0.01em; display: flex; align-items: center; gap: 8px; }
+  .logo-mark { width: 9px; height: 9px; border-radius: 50%; background: var(--amber); box-shadow: 0 0 12px var(--amber); flex-shrink: 0; animation: pulse 1.8s ease-in-out infinite; }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+
+  main {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 24px;
+  }
+
+  .wrap { max-width: 640px; margin: 0 auto; width: 100%; }
+
+  .status-card {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  .spinner {
+    width: 44px; height: 44px;
+    border: 3px solid var(--border);
+    border-top-color: var(--amber);
+    border-radius: 50%;
+    margin: 0 auto 22px;
+    animation: spin 0.9s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .status-title { font-size: 1.3rem; font-weight: 600; margin-bottom: 8px; }
+  .status-sub { color: var(--text-dim); font-size: 0.92rem; max-width: 440px; margin: 0 auto; }
+  .status-sub .mono { font-family: var(--font-mono); color: var(--text); }
+
+  .progress-track {
+    width: 100%; max-width: 380px; height: 4px;
+    background: var(--border); border-radius: 4px;
+    margin: 22px auto 10px; overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%; background: var(--amber);
+    width: 0%; border-radius: 4px;
+    transition: width 0.6s ease;
+  }
+  .elapsed { font-family: var(--font-mono); font-size: 0.78rem; color: var(--text-faint); }
+
+  .fact-card {
+    background: var(--bg-raised);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 24px 28px;
+    min-height: 110px;
+    display: flex;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .fact-label {
+    position: absolute; top: 14px; left: 28px;
+    font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.08em;
+    color: var(--text-faint); font-family: var(--font-mono);
+  }
+  .fact-text {
+    font-size: 1.02rem; line-height: 1.6; color: var(--text);
+    margin-top: 18px;
+    opacity: 0; transform: translateY(6px);
+    animation: factIn 0.5s ease forwards;
+  }
+  @keyframes factIn { to { opacity: 1; transform: translateY(0); } }
+  .fact-text .hl { color: var(--amber); font-weight: 600; font-family: var(--font-mono); }
+  .fact-text .hl-teal { color: var(--teal); font-weight: 600; font-family: var(--font-mono); }
+
+  .dots { display: flex; gap: 6px; justify-content: center; margin-top: 18px; }
+  .dots span { width: 6px; height: 6px; border-radius: 50%; background: var(--border); transition: background 0.3s ease; }
+  .dots span.active { background: var(--amber); }
+
+  .manual-link {
+    text-align: center; margin-top: 28px; font-size: 0.85rem; color: var(--text-faint);
+  }
+  .manual-link a { color: var(--text-dim); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+  .manual-link a:hover { color: var(--amber); }
+
+  .ready-banner {
+    display: none;
+    text-align: center;
+    background: var(--teal-dim);
+    border: 1px solid var(--teal);
+    border-radius: 10px;
+    padding: 18px 24px;
+    margin-bottom: 24px;
+  }
+  .ready-banner.show { display: block; }
+  .ready-banner .t { color: var(--teal); font-weight: 600; font-size: 1.05rem; }
+  .ready-banner .s { color: var(--text-dim); font-size: 0.85rem; margin-top: 4px; }
+
+  footer { text-align: center; padding: 20px; color: var(--text-faint); font-size: 0.78rem; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="logo"><span class="logo-mark"></span>SilentDrift</div>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+
+    <div class="ready-banner" id="readyBanner">
+      <div class="t">✓ Server is awake</div>
+      <div class="s">Redirecting you now…</div>
+    </div>
+
+    <div class="status-card" id="statusCard">
+      <div class="spinner"></div>
+      <div class="status-title">Waking up the server</div>
+      <div class="status-sub">
+        This is a free-tier deployment, so the backend sleeps after inactivity and takes
+        <span class="mono">~30–50s</span> to start on the first request. It's genuinely running your
+        trained classifier — real inference, not a static demo — so it's worth the wait.
+      </div>
+      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+      <div class="elapsed" id="elapsed">0s elapsed</div>
+    </div>
+
+    <div class="fact-card">
+      <div class="fact-label">While you wait — real findings from this project</div>
+      <div class="fact-text" id="factText"></div>
+    </div>
+
+    <div class="dots" id="dots"></div>
+
+    <div class="manual-link">
+      Taking longer than expected? <a onclick="goNow()">Skip ahead and try the live app anyway →</a>
+    </div>
+
+  </div>
+</main>
+
+<footer>SilentDrift — differential-testing based severity prediction for Python ML library upgrades</footer>
+
+<script>
+// ==== CONFIGURE THIS before deploying ====
+const BACKEND_URL = "https://dabc-web.onrender.com";
+const HEALTH_ENDPOINT = BACKEND_URL + "/api/catalog";
+// ==========================================
+
+const FACTS = [
+  'Of <span class="hl">88</span> catalogued default-argument breaking changes, only <span class="hl">13</span> could be differentially tested — the rest are blocked by a real constraint: Python interpreters old enough to run pre-2019 library releases simply are not installable with modern tooling anymore.',
+  'The severity classifier hits <span class="hl-teal">97%</span> accuracy under Leave-One-DABC-Out cross-validation — and it beats a naive "flag everything as risky" baseline by <span class="hl">7.3×</span> in cost-weighted terms.',
+  'The single strongest predictor of severity, found through SHAP <em>and</em> permutation importance independently: whether the affected function is an <span class="hl-teal">ensemble method</span>. Averaging across many estimators dilutes the effect of a single changed default.',
+  'Building the differential-testing pipeline surfaced a real, undocumented trap: <span class="hl">the NumPy 2.0 release broke binary compatibility with almost every scientific Python package compiled before it.',
+  'The scan feature actually parses your Python code with an AST, not regex — it finds real function calls and checks whether you are relying on a default that is about to silently change.',
+  '<span class="hl-teal">RandomForestClassifier</span> and <span class="hl-teal">ExtraTreeClassifier</span> were exposed to the identical underlying default-argument change — one tested safe, the other risky. Same change, opposite outcome, because one averages and the other does not.',
+  'This dataset comes from actually installing <em>two versions</em> of the same library side-by-side and diffing real output — not simulated, not assumed.',
+];
+
+let factIndex = 0;
+const factTextEl = document.getElementById('factText');
+const dotsEl = document.getElementById('dots');
+
+FACTS.forEach((_, i) => {
+  const dot = document.createElement('span');
+  if (i === 0) dot.className = 'active';
+  dotsEl.appendChild(dot);
+});
+
+function showFact(i) {
+  factTextEl.style.animation = 'none';
+  void factTextEl.offsetWidth; // restart animation
+  factTextEl.innerHTML = FACTS[i];
+  factTextEl.style.animation = 'factIn 0.5s ease forwards';
+  [...dotsEl.children].forEach((d, j) => d.className = j === i ? 'active' : '');
+}
+showFact(0);
+setInterval(() => {
+  factIndex = (factIndex + 1) % FACTS.length;
+  showFact(factIndex);
+}, 5000);
+
+let seconds = 0;
+const elapsedEl = document.getElementById('elapsed');
+const progressFill = document.getElementById('progressFill');
+const EXPECTED_WAKE_SECONDS = 45;
+
+const timer = setInterval(() => {
+  seconds++;
+  elapsedEl.textContent = seconds + 's elapsed';
+  const pct = Math.min(95, (seconds / EXPECTED_WAKE_SECONDS) * 100);
+  progressFill.style.width = pct + '%';
+}, 1000);
+
+function goNow() {
+  window.location.href = BACKEND_URL;
+}
+
+async function pollBackend() {
+  try {
+    const res = await fetch(HEALTH_ENDPOINT, { method: 'GET', cache: 'no-store' });
+    if (res.ok) {
+      backendIsAwake();
+      return;
+    }
+  } catch (e) {
+    // still asleep or waking up — expected, keep polling
+  }
+  setTimeout(pollBackend, 3000);
+}
+
+function backendIsAwake() {
+  clearInterval(timer);
+  progressFill.style.width = '100%';
+  document.getElementById('statusCard').style.display = 'none';
+  const banner = document.getElementById('readyBanner');
+  banner.classList.add('show');
+  setTimeout(() => { window.location.href = BACKEND_URL; }, 1200);
+}
+
+// Start polling shortly after page load
+setTimeout(pollBackend, 800);
+</script>
+
+</body>
+</html>
