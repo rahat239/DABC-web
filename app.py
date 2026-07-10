@@ -21,6 +21,27 @@ import features
 
 app = Flask(__name__, static_folder=None)
 
+# ---------------------------------------------------------------------------
+# CORS: without this, any request from a different origin (e.g. a GitHub Pages
+# splash page polling this API while the Render service wakes up) gets its
+# response silently blocked by the browser, even though the server responds
+# 200 OK. This is not optional for a splash-page-based wake-up flow.
+# ---------------------------------------------------------------------------
+@app.after_request
+def add_cors_headers(response):
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
+    response.headers["Access-Control-Allow-Headers"] = "Content-Type"
+    return response
+
+@app.route("/api/predict", methods=["OPTIONS"])
+@app.route("/api/scan", methods=["OPTIONS"])
+def cors_preflight():
+    # Browsers send an OPTIONS preflight before cross-origin POST requests with
+    # a JSON content-type. Without an explicit 200 response here, the actual
+    # POST never gets sent at all.
+    return ("", 200)
+
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 FRONTEND_DIR = BASE_DIR
 
