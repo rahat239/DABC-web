@@ -1,266 +1,509 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SilentDrift — starting up…</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --bg: #0E1420;
-    --bg-raised: #161D2C;
-    --bg-card: #1B2333;
-    --border: #2A3344;
-    --text: #E8E6DE;
-    --text-dim: #9AA3B5;
-    --text-faint: #5C6478;
-    --amber: #E8A23D;
-    --amber-dim: #4A3B22;
-    --teal: #4FA88F;
-    --teal-dim: #1F3B34;
-    --font-display: 'IBM Plex Sans', sans-serif;
-    --font-mono: 'IBM Plex Mono', monospace;
-  }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SilentDrift — know before you upgrade</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0E1420;
+            --bg-raised: #161D2C;
+            --bg-card: #1B2333;
+            --border: #2A3344;
+            --text: #E8E6DE;
+            --text-dim: #9AA3B5;
+            --text-faint: #5C6478;
+            --amber: #E8A23D;
+            --amber-dim: #4A3B22;
+            --teal: #4FA88F;
+            --teal-dim: #1F3B34;
+            --font-display: 'IBM Plex Sans', sans-serif;
+            --font-mono: 'IBM Plex Mono', monospace;
+        }
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: var(--font-display);
-    line-height: 1.55;
-    -webkit-font-smoothing: antialiased;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-  }
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: var(--font-display);
+            line-height: 1.55;
+            -webkit-font-smoothing: antialiased;
+        }
 
-  header {
-    border-bottom: 1px solid var(--border);
-    padding: 20px 0;
-  }
-  header .wrap { display: flex; align-items: center; justify-content: center; }
-  .logo { font-weight: 700; font-size: 1.05rem; letter-spacing: -0.01em; display: flex; align-items: center; gap: 8px; }
-  .logo-mark { width: 9px; height: 9px; border-radius: 50%; background: var(--amber); box-shadow: 0 0 12px var(--amber); flex-shrink: 0; animation: pulse 1.8s ease-in-out infinite; }
-  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+        a { color: inherit; }
 
-  main {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 40px 24px;
-  }
+        .wrap { max-width: 1040px; margin: 0 auto; padding: 0 24px; }
 
-  .wrap { max-width: 640px; margin: 0 auto; width: 100%; }
+        /* ---------- Header ---------- */
+        header {
+            border-bottom: 1px solid var(--border);
+            padding: 20px 0;
+        }
+        header .wrap { display: flex; align-items: center; justify-content: space-between; }
+        .logo { font-weight: 700; font-size: 1.05rem; letter-spacing: -0.01em; display: flex; align-items: center; gap: 8px; }
+        .logo-mark { width: 9px; height: 9px; border-radius: 50%; background: var(--amber); box-shadow: 0 0 12px var(--amber); flex-shrink: 0; }
+        nav { font-size: 0.85rem; color: var(--text-dim); }
+        nav a { text-decoration: none; }
+        nav a:hover { color: var(--text); }
 
-  .status-card {
-    text-align: center;
-    margin-bottom: 40px;
-  }
+        /* ---------- Hero ---------- */
+        .hero { padding: 64px 0 56px; border-bottom: 1px solid var(--border); }
+        .hero h1 {
+            font-size: 2.5rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            max-width: 620px;
+            line-height: 1.15;
+            margin-bottom: 14px;
+        }
+        .hero h1 em { font-style: normal; color: var(--amber); }
+        .hero p.lede { color: var(--text-dim); max-width: 520px; font-size: 1.02rem; margin-bottom: 40px; }
 
-  .spinner {
-    width: 44px; height: 44px;
-    border: 3px solid var(--border);
-    border-top-color: var(--amber);
-    border-radius: 50%;
-    margin: 0 auto 22px;
-    animation: spin 0.9s linear infinite;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
+        /* Interactive diff demo — the signature element */
+        .demo {
+            background: var(--bg-raised);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .demo-toolbar {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 10px 16px; border-bottom: 1px solid var(--border);
+            font-family: var(--font-mono); font-size: 0.78rem; color: var(--text-faint);
+        }
+        .demo-toolbar .dots { display: flex; gap: 6px; }
+        .demo-toolbar .dots span { width: 8px; height: 8px; border-radius: 50%; background: var(--border); }
+        .demo-body { display: grid; grid-template-columns: 1fr 220px; }
+        @media (max-width: 640px) { .demo-body { grid-template-columns: 1fr; } }
+        .demo-code {
+            font-family: var(--font-mono); font-size: 0.85rem; padding: 20px;
+            color: var(--text-dim); white-space: pre; overflow-x: auto;
+        }
+        .demo-code .kw { color: #7EA9D9; }
+        .demo-code .fn { color: #E8A23D; }
+        .demo-code .str { color: #4FA88F; }
+        .demo-code .num { color: #C99BE0; }
+        .demo-side {
+            border-left: 1px solid var(--border);
+            padding: 20px; display: flex; flex-direction: column; gap: 14px;
+            background: var(--bg-card);
+        }
+        .toggle-row { display: flex; background: var(--bg); border: 1px solid var(--border); border-radius: 7px; padding: 3px; }
+        .toggle-btn {
+            flex: 1; text-align: center; padding: 7px 4px; font-family: var(--font-mono);
+            font-size: 0.78rem; border-radius: 5px; cursor: pointer; color: var(--text-faint);
+            border: none; background: none; transition: all 0.15s ease;
+        }
+        .toggle-btn.active { background: var(--border); color: var(--text); }
+        .result-label { font-size: 0.72rem; color: var(--text-faint); text-transform: uppercase; letter-spacing: 0.06em; }
+        .result-value { font-family: var(--font-mono); font-size: 1.6rem; font-weight: 600; transition: color 0.2s ease; }
+        .result-value.risky { color: var(--amber); }
+        .result-value.safe { color: var(--teal); }
+        .result-note { font-size: 0.78rem; color: var(--text-dim); line-height: 1.5; }
+        .badge { display: inline-block; padding: 2px 8px; border-radius: 20px; font-size: 0.7rem; font-family: var(--font-mono); font-weight: 600; }
+        .badge.risky { background: var(--amber-dim); color: var(--amber); }
+        .badge.safe { background: var(--teal-dim); color: var(--teal); }
 
-  .status-title { font-size: 1.3rem; font-weight: 600; margin-bottom: 8px; }
-  .status-sub { color: var(--text-dim); font-size: 0.92rem; max-width: 440px; margin: 0 auto; }
-  .status-sub .mono { font-family: var(--font-mono); color: var(--text); }
+        /* ---------- Stats ---------- */
+        .stats { padding: 32px 0; border-bottom: 1px solid var(--border); display: flex; gap: 48px; flex-wrap: wrap; }
+        .stat .n { font-family: var(--font-mono); font-size: 1.7rem; font-weight: 600; }
+        .stat .l { font-size: 0.8rem; color: var(--text-dim); margin-top: 2px; }
 
-  .progress-track {
-    width: 100%; max-width: 380px; height: 4px;
-    background: var(--border); border-radius: 4px;
-    margin: 22px auto 10px; overflow: hidden;
-  }
-  .progress-fill {
-    height: 100%; background: var(--amber);
-    width: 0%; border-radius: 4px;
-    transition: width 0.6s ease;
-  }
-  .elapsed { font-family: var(--font-mono); font-size: 0.78rem; color: var(--text-faint); }
+        /* ---------- Search/filter ---------- */
+        .controls { padding: 32px 0 20px; display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+        input[type="text"], select {
+            background: var(--bg-raised); border: 1px solid var(--border); color: var(--text);
+            font-family: var(--font-display); font-size: 0.88rem; padding: 10px 14px; border-radius: 7px;
+            outline: none;
+        }
+        input[type="text"] { flex: 1; min-width: 220px; }
+        input[type="text"]:focus, select:focus { border-color: var(--amber); }
+        select { cursor: pointer; }
+        .chip-group { display: flex; gap: 6px; }
+        .chip {
+            padding: 8px 14px; border-radius: 20px; font-size: 0.8rem; cursor: pointer;
+            border: 1px solid var(--border); background: var(--bg-raised); color: var(--text-dim);
+            transition: all 0.15s ease; font-family: var(--font-mono);
+        }
+        .chip.active { border-color: var(--amber); color: var(--amber); background: var(--amber-dim); }
 
-  .fact-card {
-    background: var(--bg-raised);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 24px 28px;
-    min-height: 110px;
-    display: flex;
-    align-items: center;
-    position: relative;
-    overflow: hidden;
-  }
-  .fact-label {
-    position: absolute; top: 14px; left: 28px;
-    font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.08em;
-    color: var(--text-faint); font-family: var(--font-mono);
-  }
-  .fact-text {
-    font-size: 1.02rem; line-height: 1.6; color: var(--text);
-    margin-top: 18px;
-    opacity: 0; transform: translateY(6px);
-    animation: factIn 0.5s ease forwards;
-  }
-  @keyframes factIn { to { opacity: 1; transform: translateY(0); } }
-  .fact-text .hl { color: var(--amber); font-weight: 600; font-family: var(--font-mono); }
-  .fact-text .hl-teal { color: var(--teal); font-weight: 600; font-family: var(--font-mono); }
+        /* ---------- Results ---------- */
+        .results { padding: 8px 0 60px; display: flex; flex-direction: column; gap: 10px; }
+        .row {
+            background: var(--bg-raised); border: 1px solid var(--border); border-radius: 9px;
+            padding: 16px 18px; cursor: pointer; transition: border-color 0.15s ease;
+        }
+        .row:hover { border-color: #3A455A; }
+        .row-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+        .row-fn { font-family: var(--font-mono); font-size: 0.92rem; font-weight: 500; }
+        .row-mod { color: var(--text-faint); font-size: 0.8rem; font-family: var(--font-mono); margin-top: 2px; }
+        .row-right { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+        .source-tag { font-size: 0.68rem; color: var(--text-faint); font-family: var(--font-mono); }
+        .source-tag.predicted { color: #C99BE0; }
+        .row-detail {
+            margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border);
+            font-size: 0.85rem; color: var(--text-dim); display: none;
+        }
+        .row.open .row-detail { display: block; }
+        .row-detail .msg { font-family: var(--font-mono); font-size: 0.82rem; background: var(--bg); padding: 10px 12px; border-radius: 6px; margin-bottom: 10px; color: var(--text); }
+        .meta-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px,1fr)); gap: 10px; font-size: 0.78rem; }
+        .meta-grid .k { color: var(--text-faint); text-transform: uppercase; letter-spacing: 0.04em; font-size: 0.68rem; }
+        .meta-grid .v { font-family: var(--font-mono); margin-top: 2px; }
 
-  .dots { display: flex; gap: 6px; justify-content: center; margin-top: 18px; }
-  .dots span { width: 6px; height: 6px; border-radius: 50%; background: var(--border); transition: background 0.3s ease; }
-  .dots span.active { background: var(--amber); }
+        .empty { text-align: center; padding: 60px 20px; color: var(--text-faint); }
 
-  .manual-link {
-    text-align: center; margin-top: 28px; font-size: 0.85rem; color: var(--text-faint);
-  }
-  .manual-link a { color: var(--text-dim); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
-  .manual-link a:hover { color: var(--amber); }
+        /* ---------- Predict + Scan sections ---------- */
+        #predict, #scan { padding: 40px 0; border-top: 1px solid var(--border); }
+        .section-title { font-size: 1.3rem; font-weight: 600; margin-bottom: 6px; }
+        .section-sub { color: var(--text-dim); font-size: 0.9rem; margin-bottom: 20px; max-width: 560px; }
 
-  .ready-banner {
-    display: none;
-    text-align: center;
-    background: var(--teal-dim);
-    border: 1px solid var(--teal);
-    border-radius: 10px;
-    padding: 18px 24px;
-    margin-bottom: 24px;
-  }
-  .ready-banner.show { display: block; }
-  .ready-banner .t { color: var(--teal); font-weight: 600; font-size: 1.05rem; }
-  .ready-banner .s { color: var(--text-dim); font-size: 0.85rem; margin-top: 4px; }
+        .predict-form { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 18px; }
+        .predict-form input[type="text"] { flex: 1; min-width: 240px; }
+        button {
+            background: var(--amber); color: #1A1408; border: none; font-weight: 600;
+            font-family: var(--font-display); font-size: 0.88rem; padding: 10px 20px;
+            border-radius: 7px; cursor: pointer; transition: opacity 0.15s ease;
+        }
+        button:hover { opacity: 0.88; }
 
-  footer { text-align: center; padding: 20px; color: var(--text-faint); font-size: 0.78rem; }
-</style>
+        textarea {
+            width: 100%; min-height: 140px; background: var(--bg-raised); border: 1px solid var(--border);
+            color: var(--text); font-family: var(--font-mono); font-size: 0.85rem; padding: 14px;
+            border-radius: 8px; resize: vertical; outline: none; margin-bottom: 14px;
+        }
+        textarea:focus { border-color: var(--amber); }
+
+        .result-card {
+            background: var(--bg-raised); border: 1px solid var(--border); border-radius: 9px;
+            padding: 18px; margin-top: 8px;
+        }
+        .result-card .headline { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+        .result-card .headline .fn { font-family: var(--font-mono); font-weight: 600; }
+        .result-card ul { padding-left: 18px; color: var(--text-dim); font-size: 0.85rem; margin-top: 6px; }
+        .result-card .disclaimer { font-size: 0.75rem; color: var(--text-faint); margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--border); }
+        .finding {
+            border-left: 3px solid var(--border); padding: 10px 14px; margin-bottom: 8px;
+            background: var(--bg-card); border-radius: 0 7px 7px 0; font-size: 0.85rem;
+        }
+        .finding.risky { border-left-color: var(--amber); }
+        .finding.safe { border-left-color: var(--teal); }
+        .finding .fn-line { font-family: var(--font-mono); font-size: 0.82rem; color: var(--text-dim); margin-bottom: 4px; }
+        .error-box { color: var(--amber); font-size: 0.85rem; padding: 12px; background: var(--amber-dim); border-radius: 7px; }
+
+        footer { border-top: 1px solid var(--border); padding: 28px 0 40px; color: var(--text-faint); font-size: 0.82rem; }
+        footer a { color: var(--text-dim); text-decoration: underline; text-underline-offset: 2px; }
+    </style>
 </head>
 <body>
 
 <header>
-  <div class="wrap">
-    <div class="logo"><span class="logo-mark"></span>SilentDrift</div>
-  </div>
+    <div class="wrap">
+        <div class="logo"><span class="logo-mark"></span>SilentDrift</div>
+        <nav><a href="#scan">Scan</a> · <a href="#catalog">Catalog</a></nav>
+    </div>
 </header>
 
-<main>
-  <div class="wrap">
+<section class="hero">
+    <div class="wrap">
+        <h1>Same code. Same call. <em>Different answer.</em></h1>
+        <p class="lede">Default-argument changes in scikit-learn, pandas, and NumPy don't throw errors when you upgrade — they just quietly change what your code returns. SilentDrift tells you which ones actually matter before you upgrade.</p>
 
-    <div class="ready-banner" id="readyBanner">
-      <div class="t">✓ Server is awake</div>
-      <div class="s">Redirecting you now…</div>
+        <div class="demo">
+            <div class="demo-toolbar">
+                <div class="dots"><span></span><span></span><span></span></div>
+                <span>RandomForestClassifier — same nine lines, two library versions</span>
+            </div>
+            <div class="demo-body">
+                <div class="demo-code" id="demoCode">clf = <span class="fn">RandomForestClassifier</span>()
+                    clf.fit(X_train, y_train)
+                    clf.score(X_test, y_test)</div>
+                <div class="demo-side">
+                    <div class="toggle-row">
+                        <button class="toggle-btn active" data-v="old" onclick="setDemo('old')">scikit-learn 0.21</button>
+                        <button class="toggle-btn" data-v="new" onclick="setDemo('new')">scikit-learn 0.22</button>
+                    </div>
+                    <div>
+                        <div class="result-label">Accuracy returned</div>
+                        <div class="result-value safe" id="demoResult">0.947</div>
+                    </div>
+                    <div class="result-note" id="demoNote">Ensemble averaging absorbs the <code>max_features</code> default change here — SilentDrift flags this DABC <span class="badge safe">safe</span>.</div>
+                </div>
+            </div>
+        </div>
     </div>
+</section>
 
-    <div class="status-card" id="statusCard">
-      <div class="spinner"></div>
-      <div class="status-title">Waking up the server</div>
-      <div class="status-sub">
-        This is a free-tier deployment, so the backend sleeps after inactivity and takes
-        <span class="mono">~30–50s</span> to start on the first request. It's genuinely running your
-        trained classifier — real inference, not a static demo — so it's worth the wait.
-      </div>
-      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
-      <div class="elapsed" id="elapsed">0s elapsed</div>
+<section id="scan">
+    <div class="wrap">
+        <h2 class="section-title">Scan your code</h2>
+        <p class="section-sub">Paste code that builds/fits an estimator. We check every call against the known catalog and flag anything relying on a default that's about to change. Try it now — the box below is pre-filled with a real example.</p>
+        <textarea id="scanCode">from sklearn.multiclass import OneVsRestClassifier
+from sklearn.ensemble import RandomForestClassifier
+
+clf1 = OneVsRestClassifier(estimator=base)
+clf2 = RandomForestClassifier(n_estimators=100)</textarea>
+        <button onclick="runScan()">Scan</button>
+        <div id="scanResult"></div>
     </div>
+</section>
 
-    <div class="fact-card">
-      <div class="fact-label">While you wait — real findings from this project</div>
-      <div class="fact-text" id="factText"></div>
+<section id="predict">
+    <div class="wrap">
+        <h2 class="section-title">Check a function not in the catalog</h2>
+        <p class="section-sub">Live prediction from the trained model — works for any scikit-learn/pandas function, not just the 88 already catalogued.</p>
+        <div class="predict-form">
+            <input type="text" id="predictFn" placeholder="Function or class name, e.g. GradientBoostingRegressor">
+            <select id="predictLib">
+                <option value="scikit-learn">scikit-learn</option>
+                <option value="pandas">pandas</option>
+                <option value="numpy">numpy</option>
+            </select>
+            <button onclick="runPredict()">Predict</button>
+        </div>
+        <div id="predictResult"></div>
     </div>
+</section>
 
-    <div class="dots" id="dots"></div>
+<section id="catalog">
+    <div class="wrap">
+        <h2 class="section-title">Full catalog</h2>
+        <p class="section-sub">All 88 known DABCs — tested (verified by real differential testing) and predicted (model inference).</p>
+        <div class="stats" id="statsRow"></div>
 
-    <div class="manual-link">
-      Taking longer than expected? <a onclick="goNow()">Skip ahead and try the live app anyway →</a>
+        <div class="controls">
+            <input type="text" id="searchBox" placeholder="Search by function, module, or parameter…" oninput="render()">
+            <select id="libFilter" onchange="render()">
+                <option value="">All libraries</option>
+            </select>
+            <div class="chip-group" id="severityChips">
+                <div class="chip active" data-sev="" onclick="setSeverity(this,'')">All</div>
+                <div class="chip" data-sev="risky" onclick="setSeverity(this,'risky')">Risky</div>
+                <div class="chip" data-sev="safe" onclick="setSeverity(this,'safe')">Safe</div>
+            </div>
+        </div>
+
+        <div class="results" id="resultsList"></div>
     </div>
+</section>
 
-  </div>
-</main>
-
-<footer>SilentDrift — differential-testing based severity prediction for Python ML library upgrades</footer>
+<footer>
+    <div class="wrap">
+        Severity for <strong>tested</strong> DABCs comes from real differential testing (installing both library versions and diffing actual output). Severity for <strong>predicted</strong> DABCs comes from a RandomForest classifier trained on the tested set — no execution required. Methodology and full dataset: <a href="#">GitHub</a>.
+    </div>
+</footer>
 
 <script>
-// ==== CONFIGURE THIS before deploying ====
-const BACKEND_URL = "https://dabc-web.onrender.com";
-const HEALTH_ENDPOINT = BACKEND_URL + "/api/catalog";
-// ==========================================
+    let DATA = { dabcs: [] };
+    let currentSeverity = "";
 
-const FACTS = [
-  'Of <span class="hl">88</span> catalogued default-argument breaking changes, only <span class="hl">13</span> could be differentially tested — the rest are blocked by a real constraint: Python interpreters old enough to run pre-2019 library releases simply are not installable with modern tooling anymore.',
-  'The severity classifier hits <span class="hl-teal">97%</span> accuracy under Leave-One-DABC-Out cross-validation — and it beats a naive "flag everything as risky" baseline by <span class="hl">7.3×</span> in cost-weighted terms.',
-  'The single strongest predictor of severity, found through SHAP <em>and</em> permutation importance independently: whether the affected function is an <span class="hl-teal">ensemble method</span>. Averaging across many estimators dilutes the effect of a single changed default.',
-  'Building the differential-testing pipeline surfaced a real, undocumented trap: <span class="hl">the NumPy 2.0 release broke binary compatibility with almost every scientific Python package compiled before it.',
-  'The scan feature actually parses your Python code with an AST, not regex — it finds real function calls and checks whether you are relying on a default that is about to silently change.',
-  '<span class="hl-teal">RandomForestClassifier</span> and <span class="hl-teal">ExtraTreeClassifier</span> were exposed to the identical underlying default-argument change — one tested safe, the other risky. Same change, opposite outcome, because one averages and the other does not.',
-  'This dataset comes from actually installing <em>two versions</em> of the same library side-by-side and diffing real output — not simulated, not assumed.',
-];
+    const DEMO_STATES = {
+        old: { code: `clf = <span class="fn">RandomForestClassifier</span>()
+clf.fit(X_train, y_train)
+clf.score(X_test, y_test)`, result: "0.947", cls: "safe", note: 'Ensemble averaging absorbs the <code>max_features</code> default change here — SilentDrift flags this DABC <span class="badge safe">safe</span>.' },
+        new: { code: `clf = <span class="fn">RandomForestClassifier</span>()  <span style="color:#5C6478"># pinned to 0.22, same code</span>
+clf.fit(X_train, y_train)
+clf.score(X_test, y_test)`, result: "0.951", cls: "safe", note: 'Result shifted slightly but stays within noise for this ensemble — consistent with the <span class="badge safe">safe</span> label.' }
+    };
 
-let factIndex = 0;
-const factTextEl = document.getElementById('factText');
-const dotsEl = document.getElementById('dots');
-
-FACTS.forEach((_, i) => {
-  const dot = document.createElement('span');
-  if (i === 0) dot.className = 'active';
-  dotsEl.appendChild(dot);
-});
-
-function showFact(i) {
-  factTextEl.style.animation = 'none';
-  void factTextEl.offsetWidth; // restart animation
-  factTextEl.innerHTML = FACTS[i];
-  factTextEl.style.animation = 'factIn 0.5s ease forwards';
-  [...dotsEl.children].forEach((d, j) => d.className = j === i ? 'active' : '');
-}
-showFact(0);
-setInterval(() => {
-  factIndex = (factIndex + 1) % FACTS.length;
-  showFact(factIndex);
-}, 5000);
-
-let seconds = 0;
-const elapsedEl = document.getElementById('elapsed');
-const progressFill = document.getElementById('progressFill');
-const EXPECTED_WAKE_SECONDS = 45;
-
-const timer = setInterval(() => {
-  seconds++;
-  elapsedEl.textContent = seconds + 's elapsed';
-  const pct = Math.min(95, (seconds / EXPECTED_WAKE_SECONDS) * 100);
-  progressFill.style.width = pct + '%';
-}, 1000);
-
-function goNow() {
-  window.location.href = BACKEND_URL;
-}
-
-async function pollBackend() {
-  try {
-    const res = await fetch(HEALTH_ENDPOINT, { method: 'GET', cache: 'no-store' });
-    if (res.ok) {
-      backendIsAwake();
-      return;
+    function setDemo(v) {
+        document.querySelectorAll('.toggle-btn').forEach(b => b.classList.toggle('active', b.dataset.v === v));
+        const s = DEMO_STATES[v];
+        document.getElementById('demoCode').innerHTML = s.code;
+        const r = document.getElementById('demoResult');
+        r.textContent = s.result;
+        r.className = 'result-value ' + s.cls;
+        document.getElementById('demoNote').innerHTML = s.note;
     }
-  } catch (e) {
-    // still asleep or waking up — expected, keep polling
-  }
-  setTimeout(pollBackend, 3000);
-}
 
-function backendIsAwake() {
-  clearInterval(timer);
-  progressFill.style.width = '100%';
-  document.getElementById('statusCard').style.display = 'none';
-  const banner = document.getElementById('readyBanner');
-  banner.classList.add('show');
-  setTimeout(() => { window.location.href = BACKEND_URL; }, 1200);
-}
+    function setSeverity(el, sev) {
+        document.querySelectorAll('#severityChips .chip').forEach(c => c.classList.remove('active'));
+        el.classList.add('active');
+        currentSeverity = sev;
+        render();
+    }
 
-// Start polling shortly after page load
-setTimeout(pollBackend, 800);
+    function toggleRow(id) {
+        document.getElementById('row-' + id).classList.toggle('open');
+    }
+
+    function renderStats() {
+        const total = DATA.dabcs.length;
+        const tested = DATA.dabcs.filter(d => d.source === 'tested').length;
+        const predicted = total - tested;
+        const risky = DATA.dabcs.filter(d => d.severity === 'risky').length;
+        document.getElementById('statsRow').innerHTML = `
+    <div class="stat"><div class="n">${total}</div><div class="l">DABCs tracked</div></div>
+    <div class="stat"><div class="n">${tested}</div><div class="l">Verified by real differential testing</div></div>
+    <div class="stat"><div class="n">${predicted}</div><div class="l">Model-predicted (no execution)</div></div>
+    <div class="stat"><div class="n">${risky}</div><div class="l">Flagged risky</div></div>
+  `;
+    }
+
+    function populateLibFilter() {
+        const libs = [...new Set(DATA.dabcs.map(d => d.library))].sort();
+        const sel = document.getElementById('libFilter');
+        libs.forEach(l => {
+            const opt = document.createElement('option');
+            opt.value = l; opt.textContent = l;
+            sel.appendChild(opt);
+        });
+    }
+
+    function render() {
+        const q = document.getElementById('searchBox').value.toLowerCase();
+        const lib = document.getElementById('libFilter').value;
+        const list = DATA.dabcs.filter(d => {
+            if (lib && d.library !== lib) return false;
+            if (currentSeverity && d.severity !== currentSeverity) return false;
+            if (q) {
+                const hay = `${d.function} ${d.module} ${d.parameter||''}`.toLowerCase();
+                if (!hay.includes(q)) return false;
+            }
+            return true;
+        });
+
+        const container = document.getElementById('resultsList');
+        if (list.length === 0) {
+            container.innerHTML = `<div class="empty">No DABCs match these filters. Try clearing the search or severity filter.</div>`;
+            return;
+        }
+
+        container.innerHTML = list.map(d => `
+    <div class="row" id="row-${d.id}" onclick="toggleRow(${d.id})">
+      <div class="row-top">
+        <div>
+          <div class="row-fn">${d.function}</div>
+          <div class="row-mod">${d.module}${d.parameter ? ' · ' + d.parameter : ''}</div>
+        </div>
+        <div class="row-right">
+          <span class="source-tag ${d.source}">${d.source === 'tested' ? '✓ tested' : '◐ predicted · ' + Math.round(d.confidence*100) + '%'}</span>
+          <span class="badge ${d.severity}">${d.severity}</span>
+        </div>
+      </div>
+      <div class="row-detail">
+        <div class="msg">${d.dabc_msg || 'No message recorded.'}</div>
+        <div class="meta-grid">
+          <div><div class="k">Library</div><div class="v">${d.library}</div></div>
+          <div><div class="k">Version change</div><div class="v">${d.old_version || '?'} → ${d.new_version || '?'}</div></div>
+          <div><div class="k">Task type</div><div class="v">${d.task_type}</div></div>
+          <div><div class="k">Ensemble method</div><div class="v">${d.is_ensemble ? 'yes' : 'no'}</div></div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+    }
+
+    async function runPredict() {
+        const fn = document.getElementById('predictFn').value.trim();
+        const lib = document.getElementById('predictLib').value;
+        const resultDiv = document.getElementById('predictResult');
+
+        if (!fn) {
+            resultDiv.innerHTML = `<div class="error-box">Enter a function or class name first.</div>`;
+            return;
+        }
+
+        resultDiv.innerHTML = `<div class="result-card">Predicting…</div>`;
+        try {
+            const res = await fetch('/api/predict', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ function: fn, library: lib })
+            });
+            const data = await res.json();
+            if (!res.ok) {
+                resultDiv.innerHTML = `<div class="error-box">${data.error}</div>`;
+                return;
+            }
+
+            if (data.already_in_catalog) {
+                resultDiv.innerHTML = `
+        <div class="result-card">
+          <div class="headline"><span class="fn">${data.function}</span></div>
+          <div class="disclaimer" style="border-top:none;padding-top:0;margin-top:0;margin-bottom:10px;">${data.note}</div>
+          ${data.matches.map(m => `
+            <div class="finding ${m.severity}">
+              <div class="fn-line">${m.old_version || '?'} → ${m.new_version || '?'}${m.parameter ? ' · ' + m.parameter : ''}</div>
+              <div>${m.dabc_msg || 'No message recorded.'}</div>
+              <div class="source-tag ${m.source}">${m.source === 'tested' ? '✓ tested' : '◐ predicted'} · confidence ${Math.round(m.confidence*100)}% <span class="badge ${m.severity}">${m.severity}</span></div>
+            </div>
+          `).join('')}
+        </div>`;
+                return;
+            }
+
+            resultDiv.innerHTML = `
+      <div class="result-card">
+        <div class="headline">
+          <span class="fn">${data.function}</span>
+          <span class="badge ${data.severity}">${data.severity}</span>
+          <span class="source-tag">confidence ${Math.round(data.confidence*100)}%</span>
+        </div>
+        <ul>${data.reasons.map(r => `<li>${r}</li>`).join('')}</ul>
+        <div class="disclaimer">${data.note}</div>
+      </div>`;
+        } catch (e) {
+            resultDiv.innerHTML = `<div class="error-box">Request failed: ${e.message}</div>`;
+        }
+    }
+
+    async function runScan() {
+        const code = document.getElementById('scanCode').value;
+        const resultDiv = document.getElementById('scanResult');
+
+        if (!code.trim()) {
+            resultDiv.innerHTML = `<div class="error-box">Paste some code first.</div>`;
+            return;
+        }
+
+        resultDiv.innerHTML = `<div class="result-card">Scanning…</div>`;
+        try {
+            const res = await fetch('/api/scan', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ code })
+            });
+            const data = await res.json();
+            if (!res.ok) {
+                resultDiv.innerHTML = `<div class="error-box">${data.error}</div>`;
+                return;
+            }
+            if (data.total_findings === 0) {
+                resultDiv.innerHTML = `<div class="result-card">No known DABCs found in this code — either it's clean, or it doesn't call any catalogued function.</div>`;
+                return;
+            }
+            resultDiv.innerHTML = `
+      <div class="result-card">
+        <div class="headline"><strong>${data.total_findings} finding(s)</strong> — ${data.risky_findings} risky</div>
+        ${data.findings.map(f => `
+          <div class="finding ${f.severity}">
+            <div class="fn-line">line ${f.line || '?'} · ${f.function}</div>
+            <div>${f.reason}${f.dabc_msg ? ' — ' + f.dabc_msg : ''}</div>
+            <div class="source-tag ${f.source}">${f.source === 'tested' ? '✓ tested' : '◐ predicted · ' + Math.round((f.confidence||0)*100) + '%'} · ${f.old_version || '?'} → ${f.new_version || '?'}</div>
+          </div>
+        `).join('')}
+      </div>`;
+        } catch (e) {
+            resultDiv.innerHTML = `<div class="error-box">Request failed: ${e.message}</div>`;
+        }
+    }
+
+    async function init() {
+        try {
+            const res = await fetch('/api/catalog');
+            DATA = await res.json();
+        } catch (e) {
+            console.error('Could not load /api/catalog', e);
+        }
+        populateLibFilter();
+        renderStats();
+        render();
+    }
+
+    init();
 </script>
 
 </body>
